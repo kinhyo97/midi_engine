@@ -1,0 +1,5 @@
+build-msvc/
+.vscode/
+*.user
+*.VC.db
+*.VC.opendb
