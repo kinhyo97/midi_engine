@@ -3,3 +3,4 @@ build-msvc/
 *.user
 *.VC.db
 *.VC.opendb
+docs/
