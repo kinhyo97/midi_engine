@@ -1,6 +1,7 @@
 #include "MainComponent.h"
 
 MainComponent::MainComponent()
+    // audioSession을 통해 피아노를 불러옴
     : audioSession(pianoInstrument, midiNoteState),
       dashboard(midiNoteState)
 {
