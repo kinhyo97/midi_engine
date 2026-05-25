@@ -7,6 +7,7 @@ namespace
 constexpr int firstPianoMidiNote = 21; // A0
 constexpr int lastPianoMidiNote = 108; // C8
 
+// 각 MIDI 노트가 몇 번째 흰건반 위치에 해당하는지 미리 계산해 둔다.
 std::array<int, 88> buildWhiteKeyIndexes()
 {
     std::array<int, 88> indexes {};
@@ -33,26 +34,31 @@ constexpr int totalWhiteKeys = 52;
 PianoKeyboardView::PianoKeyboardView(MidiNoteState& midiNoteStateToUse)
     : midiNoteState(midiNoteStateToUse)
 {
+    // 노트 상태가 바뀌면 다시 그릴 수 있도록 변경 리스너에 등록한다.
     midiNoteState.addChangeListener(this);
 }
 
 PianoKeyboardView::~PianoKeyboardView()
 {
+    // 뷰가 사라질 때는 리스너 등록도 함께 해제한다.
     midiNoteState.removeChangeListener(this);
 }
 
 void PianoKeyboardView::paint(juce::Graphics& g)
 {
+    // 피아노 전체가 들어갈 배경 영역을 잡는다.
     auto area = getLocalBounds().toFloat();
     area.reduce(0.0f, 4.0f);
 
     g.setColour(juce::Colour(0xff0b0d0f));
     g.fillRoundedRectangle(area, 14.0f);
 
+    // 전체 폭을 기준으로 흰건반/검은건반 크기를 계산한다.
     const auto whiteKeyWidth = area.getWidth() / static_cast<float>(totalWhiteKeys);
     const auto blackKeyWidth = whiteKeyWidth * 0.62f;
     const auto blackKeyHeight = area.getHeight() * 0.62f;
 
+    // 먼저 흰건반을 모두 그린다.
     for (int midiNote = firstPianoMidiNote; midiNote <= lastPianoMidiNote; ++midiNote)
     {
         if (isBlackKey(midiNote))
@@ -64,6 +70,7 @@ void PianoKeyboardView::paint(juce::Graphics& g)
                                                 whiteKeyWidth,
                                                 area.getHeight());
 
+        // 현재 눌린 노트면 강조 색상으로 표시한다.
         const auto isActive = midiNoteState.isNoteActive(midiNote);
         g.setColour(isActive ? juce::Colour(0xfff0c674) : juce::Colour(0xfff4f4f0));
         g.fillRect(keyBounds);
@@ -79,6 +86,7 @@ void PianoKeyboardView::paint(juce::Graphics& g)
         }
     }
 
+    // 검은건반은 흰건반 위에 겹쳐 보이도록 나중에 그린다.
     for (int midiNote = firstPianoMidiNote; midiNote <= lastPianoMidiNote; ++midiNote)
     {
         if (!isBlackKey(midiNote))
@@ -99,12 +107,14 @@ void PianoKeyboardView::paint(juce::Graphics& g)
 
 void PianoKeyboardView::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
+    // MidiNoteState 변경 알림을 받으면 건반 색을 다시 그린다.
     if (source == &midiNoteState)
         repaint();
 }
 
 bool PianoKeyboardView::isBlackKey(int midiNoteNumber) const
 {
+    // 옥타브 내 pitch class 기준으로 검은건반 여부를 판별한다.
     switch (midiNoteNumber % 12)
     {
         case 1:
@@ -120,5 +130,6 @@ bool PianoKeyboardView::isBlackKey(int midiNoteNumber) const
 
 juce::String PianoKeyboardView::getNoteName(int midiNoteNumber) const
 {
+    // C4, F#3 같은 표시용 노트 이름 문자열을 만든다.
     return juce::MidiMessage::getMidiNoteName(midiNoteNumber, true, true, 3);
 }
