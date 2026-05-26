@@ -29,6 +29,8 @@ public:
     bool setInstrument(const Instrument& instrument);
 
     bool isReady() const;
+    // 최상위 조립자가 엔진 이벤트를 구독할 수 있게 접근 통로를 제공한다.
+    MusicEngine& getEngine();
     const juce::String& getLastError() const;
 
     Status getStatus() const;

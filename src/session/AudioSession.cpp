@@ -102,6 +102,12 @@ bool AudioSession::isReady() const
     return engine.isReady();
 }
 
+// UI 조립 레이어가 엔진 이벤트 콜백을 연결할 수 있게 엔진 참조를 돌려준다.
+MusicEngine& AudioSession::getEngine()
+{
+    return engine;
+}
+
 const juce::String& AudioSession::getLastError() const
 {
     return lastError;

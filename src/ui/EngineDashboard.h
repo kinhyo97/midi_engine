@@ -25,6 +25,7 @@ public:
     void resized() override;
 
 private:
+    // 제목
     juce::Label titleLabel;
     juce::Label audioTypeLabel;
     juce::Label deviceNameLabel;

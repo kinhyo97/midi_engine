@@ -2,8 +2,10 @@
 
 #include <juce_gui_basics/juce_gui_basics.h>
 
+#include "../engine/MidiPerformanceEvent.h"
 #include "../instrument/PianoInstrument.h"
 #include "../instrument/SynthInstrument.h"
+#include "../network/MidiWebSocketClient.h"
 #include "../session/AudioSession.h"
 #include "../state/MidiNoteState.h"
 #include "EngineDashboard.h"
@@ -37,6 +39,8 @@ private:
     MidiNoteState midiNoteState;
     // 오디오 관련 엔진을 불러옴
     AudioSession audioSession;
+    // 화면에서 발생한 MIDI 이벤트를 서버용 JSON으로 바꾸는 송신기를 둔다.
+    MidiWebSocketClient webSocketClient;
     // 대시보드를 가져옴
     EngineDashboard dashboard;
     int currentInstrumentId = pianoChoice;

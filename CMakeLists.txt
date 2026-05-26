@@ -16,6 +16,7 @@ target_sources(midi_engine
         src/instrument/PianoInstrument.cpp
         src/instrument/SynthInstrument.cpp
         src/main.cpp
+        src/network/MidiWebSocketClient.cpp
         src/sample/SampleLibrary.cpp
         src/session/AudioSession.cpp
         src/state/MidiNoteState.cpp
@@ -41,3 +42,7 @@ target_link_libraries(midi_engine
         juce::juce_recommended_config_flags
         juce::juce_recommended_warning_flags
 )
+
+if(WIN32)
+    target_link_libraries(midi_engine PRIVATE winhttp)
+endif()
